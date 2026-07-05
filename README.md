@@ -4,8 +4,8 @@
 
 ## Установка:
 ```bash
-git clone https://github.com/vldmirr/QuizApp
-cd QuizApp
+git clone https://github.com/vldmirr/DocApp
+cd DocApp
 ```
 
 ## ⚙️Конфигурация:
