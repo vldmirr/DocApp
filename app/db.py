@@ -5,7 +5,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-
 def get_database_url():
     # те которые задали специально в .env
     database_url = os.getenv("DATABASE_URL")
@@ -20,6 +19,8 @@ def get_database_url():
     db_name = os.getenv("POSTGRES_DB", "qna_db")
     
     return f"postgresql://{user}:{password}@{host}:{port}/{db_name}"
+
+
 
 DATABASE_URL = get_database_url()
 
