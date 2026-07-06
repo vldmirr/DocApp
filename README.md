@@ -1,7 +1,5 @@
 # DocApp
 
-## Установка
-
 ## Установка:
 ```bash
 git clone https://github.com/vldmirr/DocApp
