@@ -4,10 +4,12 @@ services:
     command: uvicorn app.main:app --host 0.0.0.0 --port 8080 --reload
     volumes:
       - .:/app
+      - ./data:/app/data  
+      - ./scripts:/app/scripts  
     ports:
       - "8080:8080"
     environment:
-      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
+      - DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
     depends_on:
       - db
     logging:
@@ -15,23 +17,6 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
-  
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
-    environment:
-      - discovery.type=single-node
-      - xpack.security.enabled=false
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-    ports:
-      - "9200:9200"
-    volumes:
-      - 'es_data:/usr/share/elasticsearch/data'
-      - './scripts/setup-users.sh:/usr/local/bin/setup-users.sh:ro'
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9200/_cluster/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
 
   db:
     image: postgres:17 
@@ -43,17 +28,24 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     ports:
       - "${POSTGRES_PORT}:5432"
+
+  
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+    volumes:
+      - elastic_data:/usr/share/elasticsearch/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
-      timeout: 5s
+      test: ["CMD", "curl", "-f", "http://localhost:9200/_cluster/health"]
+      interval: 30s
+      timeout: 10s
       retries: 5
 
 volumes:
   postgres_data:
-  es_data:
-    driver: local
-
-networks:
-  stack:
-    driver: bridge
+  elastic_data:

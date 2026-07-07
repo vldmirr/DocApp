@@ -1,61 +1,87 @@
+import asyncio
 import os
 import sys
 from logging.config import fileConfig
 
-from sqlalchemy import engine_from_config
 from sqlalchemy import pool
-
+from sqlalchemy.ext.asyncio import create_async_engine
 from alembic import context
 
-from app.models.models import Base
-from app.db import DATABASE_URL
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
+from app.db import Base
+from app.db import ASYNC_DATABASE_URL
 
 config = context.config
-sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-def get_url():
-    return DATABASE_URL
+target_metadata = Base.metadata
 
 def run_migrations_offline() -> None:
-    """ 'offline' mode."""
-    url = get_url()
+    """Run migrations in 'offline' mode."""
+    url = ASYNC_DATABASE_URL
     context.configure(
         url=url,
-        metadata=Base.metadata,
+        target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
+        # Включаем сравнение типов
+        compare_type=True,
+        compare_server_default=True,
     )
 
     with context.begin_transaction():
         context.run_migrations()
 
-def run_migrations_online() -> None:
-    """ 'online' mode."""
-    configuration = config.get_section(config.config_ini_section)
-    configuration["sqlalchemy.url"] = get_url()
-    
-    connectable = engine_from_config(
-        configuration,
-        prefix="sqlalchemy.",
-        poolclass=pool.NullPool,
+def do_run_migrations(connection):
+    """Выполнение миграций с синхронным подключением"""
+    context.configure(
+        connection=connection,
+        target_metadata=target_metadata,
+        # Включаем сравнение типов для автоматического обнаружения изменений
+        compare_type=True,
+        compare_server_default=True,
+        include_schemas=True,
+        # Добавляем функцию для фильтрации таблиц
+        include_object=include_object,
     )
 
-    with connectable.connect() as connection:
-        context.configure(
-            connection=connection, 
-            target_metadata=Base.metadata,
-            compare_type=True,
-            compare_server_default=True,
+    with context.begin_transaction():
+        context.run_migrations()
+
+def include_object(object, name, type_, reflected, compare_to):
+    """Фильтр для включения только нужных объектов"""
+    # Игнорируем системные таблицы
+    if type_ == "table" and name.startswith("alembic"):
+        return False
+    return True
+
+async def run_migrations_online() -> None:
+    """Run migrations in 'online' mode with async engine."""
+    try:
+        connectable = create_async_engine(
+            ASYNC_DATABASE_URL,
+            poolclass=pool.NullPool,
+            echo=True,
+            pool_pre_ping=True,
         )
 
-        with context.begin_transaction():
-            context.run_migrations()
+        print(f"Подключение к БД: {ASYNC_DATABASE_URL}")
+        
+        async with connectable.connect() as connection:
+            print("Подключение установлено успешно")
+            await connection.run_sync(do_run_migrations)
+            print("Миграции выполнены успешно")
+
+        await connectable.dispose()
+        
+    except Exception as e:
+        print(f"Ошибка при выполнении миграций: {e}")
+        raise
 
 if context.is_offline_mode():
     run_migrations_offline()
 else:
-    run_migrations_online()
+    asyncio.run(run_migrations_online())

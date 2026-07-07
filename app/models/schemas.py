@@ -2,19 +2,16 @@ from pydantic import BaseModel
 from typing import List, Optional
 from datetime import datetime
 
-
 class DocumentBase(BaseModel):
     text: str
     rubrics: List[str] = []
 
-
 class DocumentCreate(DocumentBase):
     pass
 
-
 class DocumentUpdate(BaseModel):
-    rubrics: Optional[List[str]] = None
     text: Optional[str] = None
+    rubrics: Optional[List[str]] = None
 
 class DocumentDelete(BaseModel):
     id: int
@@ -23,7 +20,7 @@ class DocumentResponse(BaseModel):
     id: int
     rubrics: List[str]
     text: str
-    created_at: datetime
+    created_date: datetime
     
     class Config:
         from_attributes = True
