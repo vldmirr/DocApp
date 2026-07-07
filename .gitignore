@@ -2,4 +2,3 @@ __pycache__
 logs
 .vscode
 .pytest_cache
-.env
