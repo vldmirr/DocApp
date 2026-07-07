@@ -2,7 +2,6 @@
 
 ## Установка
 
-## Установка:
 ```bash
 git clone https://github.com/vldmirr/DochApp
 cd DocApp
