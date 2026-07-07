@@ -7,6 +7,23 @@ git clone https://github.com/vldmirr/DochApp
 cd DocApp
 ```
 
+### Первый способ: ручная установка
+
+```bash
+python -m venv venv
+#Для Windows: 
+venv\Scripts\activate
+# Для macOS / Linux: 
+source venv/bin/activat
+
+pip install -r requirements.txt
+```
+
+### Второй способ: поднимаем все необходимые контейнеры
+```bash
+docker-compose up -d
+```
+
 ## ⚙️Конфигурация:
 
 Файл содержимое файла `.env` выглядит следующим образом, и содержит в себе параметры для настройки базы:
@@ -24,10 +41,6 @@ LOG_LEVEL=INFO
 DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
 ```
 
-### 1. поднимаем все необходимые контейнеры
-```bash
-docker-compose up -d
-```
 Сервисы:
    - `web-1`: FastAPI приложение
 
