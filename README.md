@@ -65,9 +65,10 @@ docker-compose exec db psql -U test_postgres -d test_db -c "\dt"
 
 ## 📡 API конечные точки
 Swagger UI: http://localhost:8080/docs
-**GET** `/api/v1/search` - непосредственно сам поиск
-**POST** `/api/v1/documents` - создание запроса
-**DELETE** `/api/v1/documents/{doc_id}` - удаление запроса
+
+- **GET** `/api/v1/search` - непосредственно сам поиск
+- **POST** `/api/v1/documents` - создание запроса
+- **DELETE** `/api/v1/documents/{doc_id}` - удаление запроса
 
 ## Формат передаваемых данных:
 
