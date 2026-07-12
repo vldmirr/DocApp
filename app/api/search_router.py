@@ -1,7 +1,7 @@
-from app.db import get_db
-from app.elastic import search_elastic, delete_from_elastic, index_document
-from app.api.doc_router import get_documents_by_ids, delete_document, create_document
-from app.models.schemas import DocumentCreate, DocumentResponse, SearchResponse
+from ..db import get_db
+from ..elastic import search_elastic, delete_from_elastic, index_document
+from ..api.doc_router import get_documents_by_ids, delete_document, create_document
+from ..models.schemas import DocumentCreate, DocumentResponse, SearchResponse
 from fastapi import Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List

@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, desc
-from app.db import Document
-from app.models.schemas import DocumentCreate
+from ..db import Document
+from ..models.schemas import DocumentCreate
 from datetime import datetime, timezone
 
 def utc_now():

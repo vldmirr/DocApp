@@ -1,11 +1,11 @@
 from fastapi import FastAPI, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from contextlib import asynccontextmanager
-from app.db import init_db, get_db
-from app.elastic import init_elastic, close_elastic
-from app.api.search_router import SearchService
-from app.models.schemas import SearchResponse, DocumentCreate, DocumentResponse
-from app.api.doc_router import create_document
+from .db import init_db, get_db
+from .elastic import init_elastic, close_elastic
+from .api.search_router import SearchService
+from .models.schemas import SearchResponse, DocumentCreate, DocumentResponse
+from .api.doc_router import create_document
 import uvicorn
 import logging
 
