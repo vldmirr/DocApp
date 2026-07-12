@@ -14,7 +14,7 @@ python -m venv venv
 #Для Windows: 
 venv\Scripts\activate
 # Для macOS / Linux: 
-source venv/bin/activat
+source venv/bin/activate
 
 pip install -r requirements.txt
 ```
