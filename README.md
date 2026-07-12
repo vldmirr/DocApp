@@ -3,7 +3,7 @@
 ## Установка
 
 ```bash
-git clone https://github.com/vldmirr/DochApp
+git clone https://github.com/vldmirr/DocApp
 cd DocApp
 ```
 
