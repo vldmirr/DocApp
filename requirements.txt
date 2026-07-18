@@ -13,3 +13,4 @@ psycopg2
 asyncpg
 elasticsearch==8.11.0
 aiohttp
+aiosqlite
