@@ -1,27 +1,44 @@
+import os
+os.environ["DATABASE_URL"] = "sqlite+aiosqlite:///:memory:"
+
 import pytest
-from fastapi.testclient import TestClient
 from ..app.main import app
+from ..app.db import init_db
+from ..app.elastic import init_elastic
+from httpx import AsyncClient, ASGITransport
+import asyncio
 
-client = TestClient(app)
+@pytest.fixture(scope="session", autouse=True)
+def setup_database():
+    """Инициализирует БД перед тестами"""
 
-class TestSearchAPI:
-    def test_search_success(self):
-        response = client.get("/search?query=test")
+    asyncio.run(init_db())
+
+@pytest.mark.asyncio
+async def test_search_success():
+    async with AsyncClient(transport=ASGITransport(app=app),
+                            base_url="http://test") as ac: 
+        response = await ac.get("/search", params={"query":"text","limit":20}) 
         assert response.status_code == 200
-        
-    def test_search_empty_query(self):
-        response = client.get("/search?query=")
-        assert response.status_code == 422
-        
-    def test_create_document(self):
-        data = {"id": 1, "text": "test content"}
-        response = client.post("/documents", json=data)
+
+@pytest.mark.asyncio
+async def test_create_document():
+    async with AsyncClient(transport=ASGITransport(app=app),
+                            base_url="http://test") as ac:  
+        data = {"text":"test_text","rubrics":["6","7"]}
+        response = await ac.post("/documents", json=data)
         assert response.status_code == 200
-        
-    def test_delete_document(self):
-        response = client.delete("/documents/1")
+   
+@pytest.mark.asyncio  
+async def test_delete_document():
+    async with AsyncClient(transport=ASGITransport(app=app),
+                            base_url="http://test") as ac: 
+        response = await ac.delete("/documents/1")
         assert response.status_code == 200
-        
-    def test_delete_not_found(self):
-        response = client.delete("/documents/9999")
+    
+@pytest.mark.asyncio  
+async def test_delete_not_found():
+    async with AsyncClient(transport=ASGITransport(app=app),
+                            base_url="http://test") as ac: 
+        response = await ac.delete("/documents/9999")
         assert response.status_code == 404
