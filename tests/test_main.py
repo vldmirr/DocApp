@@ -4,7 +4,6 @@ os.environ["DATABASE_URL"] = "sqlite+aiosqlite:///:memory:"
 import pytest
 from ..app.main import app
 from ..app.db import init_db
-from ..app.elastic import init_elastic
 from httpx import AsyncClient, ASGITransport
 import asyncio
 
