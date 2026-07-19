@@ -85,7 +85,7 @@ Swagger UI: http://localhost:8080/docs
 
 ```bash
 cd DocApp/test
-pytest test_main.py -v
+pytest -v
 ```
 
 ### Результа:
