@@ -84,5 +84,6 @@ Swagger UI: http://localhost:8080/docs
 тесты расположены в папке `test`. Чтобы их запустить нужно сделать следующией действия
 
 ```bash
+cd DocApp
 pytest -v
 ```
