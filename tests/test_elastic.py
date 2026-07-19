@@ -5,7 +5,6 @@ from unittest.mock import AsyncMock, patch, MagicMock
 import sys
 from pathlib import Path
 
-# Добавляем корневую директорию в PYTHONPATH
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from app.elastic import (
@@ -45,17 +44,17 @@ async def test_data():
 @pytest.mark.asyncio
 async def test_init_elastic_creates_new_index(mock_es_client):
     """Тест создания нового индекса, если он не существует"""
-    # Настраиваем мок: индекс не существует
+   
     mock_es_client.indices.exists.return_value = False
     
     await init_elastic()
     
-    # Проверяем, что индекс был создан
+   
     mock_es_client.indices.exists.assert_called_once_with(index="documents")
     mock_es_client.indices.delete.assert_not_called()
     mock_es_client.indices.create.assert_called_once()
     
-    # Проверяем параметры создания индекса
+   
     call_args = mock_es_client.indices.create.call_args
     assert call_args.kwargs["index"] == "documents"
     assert "mappings" in call_args.kwargs["body"]
@@ -105,7 +104,6 @@ async def test_index_document_handles_error(mock_es_client, test_data, capsys):
     
     await index_document(doc_id, text)
     
-    # Проверяем, что ошибка была залогирована
     captured = capsys.readouterr()
     assert f"Ошибка индексации документа {doc_id}" in captured.out
 
@@ -233,7 +231,6 @@ async def test_search_elastic_returns_only_ids(mock_es_client):
     result = await search_elastic("запрос")
     
     assert result == [10, 20, 30]
-    # Проверяем, что extra поля не попали в результат
 
 @pytest.mark.asyncio
 async def test_delete_index_success(mock_es_client):
@@ -281,19 +278,19 @@ async def test_close_elastic(mock_es_client):
 #         for doc_id, text in test_docs:
 #             await index_document(doc_id, text)
         
-#         # Поиск
+#         #Search
 #         results = await search_elastic("тестовый", size=10)
 #         assert len(results) > 0
 #         assert 1 in results or 2 in results
         
-#         # Удаление документа
+#         #Delete
 #         await delete_from_elastic(1)
         
-#         # Проверяем, что документ удален
+#         # Check
 #         results_after_delete = await search_elastic("тестовый", size=10)
 #         assert 1 not in results_after_delete
         
-#         # Очистка
+#         #Clear
 #         await delete_index()
         
 #     finally:
@@ -316,11 +313,11 @@ async def test_close_elastic(mock_es_client):
 #         for doc_id, text in documents:
 #             await index_document(doc_id, text)
         
-#         # Поиск должен найти все документы
+#         # Search
 #         results = await search_elastic("документ", size=20)
 #         assert len(results) == 20
         
-#         # Проверяем, что все ID присутствуют
+#         # chek ID
 #         expected_ids = list(range(1, 101))
 #         assert sorted(results) == expected_ids
         
